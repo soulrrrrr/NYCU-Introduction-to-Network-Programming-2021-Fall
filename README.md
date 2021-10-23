@@ -5,5 +5,11 @@ Recommended compile & run on Linux system.
 ---
 
 - [HW1 BBS Server](HW1)
-  - 未寫multithread
-  - 暫放用
+  - 簡易 BBS server, 支援同時多人在線、發送訊息、接收訊息
+  - 進度: 已完成 multithread (100%)
+  - 編譯: `make`
+  - 開啟 Server : `./hw1 <port>`
+  - Client 連接 : `nc <IP> <port>`
+  - [指令&範例](https://hackmd.io/@Cw77l7QTQyuEGh-tVg3fjA/SyfBvXd4t)
+  - `感謝 1am9trash 指導 multithread 語法`
+
