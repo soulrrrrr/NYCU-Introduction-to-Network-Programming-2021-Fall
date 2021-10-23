@@ -115,8 +115,8 @@ void *newClient(void *data) {
         send(clientfd, send_buf, strlen(send_buf), 0);
         int rec = recv(clientfd, recv_buf, sizeof(recv_buf), 0);
         if (rec <= 0) {
-            cerr << "recv() error. (This occurs when the client pressed Ctrl-C.)\n";
-	        break;
+            cerr << "recv() error.\n";
+	    break;
         }
         message_cnt++;
         recv_buf[rec-1] = '\0';
@@ -235,7 +235,7 @@ void *newClient(void *data) {
                                 strcat(tmp, split[i]);
                             }
                             strncpy(tmpProcessed, &tmp[1], strlen(tmp)-2);
-                            tmpProcessed[strlen(tmp)-2] = '\0';
+                            strcat(tmpProcessed, "");
                             u->mailbox.push_back(Mail(now_login, tmpProcessed));
                             cout << now_login << " send \"" << tmpProcessed << "\" to " << u->username << "." << endl;
                             exists = true;
@@ -322,6 +322,7 @@ void *newClient(void *data) {
                             //     strcpy(send_buf, "No message from this user.\n");
                             //     send(clientfd, send_buf, strlen(send_buf), 0);
                             // }
+                            break; 
                         }
                     }
                     if (!exists) {
