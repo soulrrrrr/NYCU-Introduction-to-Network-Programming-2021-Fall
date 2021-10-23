@@ -113,9 +113,10 @@ void *newClient(void *data) {
         strcpy(send_buf, "% ");
         send(clientfd, send_buf, strlen(send_buf), 0);
         int rec = recv(clientfd, recv_buf, sizeof(recv_buf), 0);
-        if (rec < 0) {
+	cout << rec << endl;
+        if (rec <= 0) {
             cerr << "recv() error.\n";
-            continue;
+	    break;
         }
 
         recv_buf[rec-1] = '\0';
@@ -233,8 +234,9 @@ void *newClient(void *data) {
                                 strcat(tmp, split[i]);
                             }
                             strncpy(tmpProcessed, &tmp[1], strlen(tmp)-2);
+			    strcat(tmpProcessed, "");
                             u->mailbox.push_back(Mail(now_login, tmpProcessed));
-                            cout << now_login << " send a message to " << u->username << "." << endl;
+                            cout << now_login << " send \"" << tmpProcessed << "\" to " << u->username << "." << endl;
                             exists = true;
                             break;
                         }
@@ -356,7 +358,8 @@ void *newClient(void *data) {
     }
 
     close(clientfd);
-    pthread_exit(NULL);
+    //pthread_exit(NULL);
+    return NULL;
 }
 
 
