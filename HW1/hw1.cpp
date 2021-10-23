@@ -8,6 +8,7 @@
 #include <strings.h>
 #include <vector> // std::vector
 #include <algorithm> // std::sort
+#include <pthread.h>
 
 #define SERV_PORT 9877
 #define MAXUSER 1
@@ -42,8 +43,8 @@ struct User{
 vector<User> user_list;
 char now_login[4096];
 
-int char_to_int(char *c); // Thomas Wang
-char *int_to_char(int t);
+int char_to_int(char *c); // Inspired by Thomas Wang
+char *int_to_char(int t); // can use atoi instead
 
 int main(int argc, char** argv) {
     int serverfd, clientfd;
@@ -134,9 +135,9 @@ int main(int argc, char** argv) {
                         continue;
                     }
                     for (auto u : user_list) {
-                        cout << u.username << " " << u.password << endl;
                         if (!strcmp(u.username, split[1])) {
                             if (!strcmp(u.password, split[2])) { // same username and password : login succeed
+                                cout << u.username << ": Login successful." << endl;
                                 strcpy(now_login, u.username);
                                 break;
                             }
@@ -159,7 +160,6 @@ int main(int argc, char** argv) {
                 }
             }
             else if (!strcmp(split[0], "whoami")) { // whoami
-                cout << strlen(now_login) << endl;
                 if (strlen(now_login)) {
                     strcpy(send_buf, now_login);
                     strcat(send_buf, "\n");
@@ -192,13 +192,21 @@ int main(int argc, char** argv) {
                 }
             }
             else if (!strcmp(split[0], "send")) { // send
-                if (cnt == 3) {
+                if (cnt >= 3) { 
                     if (strlen(now_login)) { 
                         bool exists = false;
                         for (auto u = user_list.begin(); u != user_list.end(); u++) {
                             if (!strcmp(u->username, split[1])) {
-                                u->mailbox.push_back(Mail(now_login, split[2]));
-                                cout << u->username << " " << u->mailbox.size() << endl;
+                                char tmp[4096];
+                                char tmpProcessed[4096];
+                                strcpy(tmp, split[2]);
+                                for(int i = 3; i < cnt; i++) {
+                                    strcat(tmp, " ");
+                                    strcat(tmp, split[i]);
+                                }
+                                strncpy(tmpProcessed, &tmp[1], strlen(tmp)-2);
+                                u->mailbox.push_back(Mail(now_login, tmpProcessed));
+                                cout << now_login << " send a message to " << u->username << "." << endl;
                                 exists = true;
                                 break;
                             }
@@ -222,7 +230,6 @@ int main(int argc, char** argv) {
                 if (strlen(now_login)) {
                     for (auto u = user_list.begin(); u != user_list.end(); u++) {
                         if (!strcmp(u->username, now_login)) {
-                            cout << u->username << " " << u->mailbox.size() << endl;
                             if (u->mailbox.empty()) {
                                 strcpy(send_buf, "Your message box is empty.\n");
                                 send(clientfd, send_buf, strlen(send_buf), 0);
@@ -266,6 +273,8 @@ int main(int argc, char** argv) {
                     if (strlen(now_login)) {
                         bool exists = false;
                         for(auto u = user_list.begin(); u != user_list.end(); u++) {
+                            if (!strcmp(u->username, split[1]))
+                                exists = true;
                             if (!strcmp(u->username, now_login)) {
                                 bool received = false;
                                 for (auto m = u->mailbox.begin(); m != u->mailbox.end(); m++) {
@@ -278,11 +287,10 @@ int main(int argc, char** argv) {
                                         break;
                                     }
                                 }
-                                if (!received) {
-                                    strcpy(send_buf, "No message from this user.\n");
-                                    send(clientfd, send_buf, strlen(send_buf), 0);
-                                }
-                                exists = true;
+                                // if (!received) {
+                                //     strcpy(send_buf, "No message from this user.\n");
+                                //     send(clientfd, send_buf, strlen(send_buf), 0);
+                                // }
                                 break; 
                             }
                         }
@@ -311,10 +319,10 @@ int main(int argc, char** argv) {
                 }
                 break;
             }
-            else {
-                strcpy(send_buf, "GG.\n");
-                send(clientfd, send_buf, strlen(send_buf), 0);
-            }
+            // else {
+            //     strcpy(send_buf, "GG.\n");
+            //     send(clientfd, send_buf, strlen(send_buf), 0);
+            // }
             
         }
 
@@ -325,8 +333,7 @@ int main(int argc, char** argv) {
         // }
         close(clientfd);
     }
-
-    cout << sizeof(servaddr) << endl;
+    cout << "Server closed." << endl;
     return 0;
 }
 
