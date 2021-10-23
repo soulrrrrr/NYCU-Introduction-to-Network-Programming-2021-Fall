@@ -233,6 +233,7 @@ void *newClient(void *data) {
                                 strcat(tmp, split[i]);
                             }
                             strncpy(tmpProcessed, &tmp[1], strlen(tmp)-2);
+                            strcat(tmpProcessed, "");
                             u->mailbox.push_back(Mail(now_login, tmpProcessed));
                             cout << now_login << " send a message to " << u->username << "." << endl;
                             exists = true;
