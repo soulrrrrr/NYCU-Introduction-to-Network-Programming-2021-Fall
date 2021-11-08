@@ -28,10 +28,14 @@ int parse(
     string temp;
     string msg;
     vector<string> split;
-    while(ss >> temp) {
+    while(1) {
+        ss >> temp;
+        if (ss.fail()) break;
         split.push_back(temp);
         temp.clear();
     }
+
+    if (split.empty()) return 0;
 
     int ret = 0;
     if (split[0] == "register") parseRegister(sockfd, users, login, split);
@@ -43,6 +47,8 @@ int parse(
     else if (split[0] == "list-board") parseListBoard(sockfd, boards);
     else if (split[0] == "list-post") parseListPost(sockfd, split, boards, posts);
     else if (split[0] == "read") parseRead(sockfd, split, boards, posts);
+    else if (split[0] == "delete-post") parseDeletePost(sockfd, login, split, boards, posts);
+
 
     write(sockfd, readbuf, n);
     return ret;
@@ -314,15 +320,16 @@ void parseListPost(
         if (b->name == split[1]) {
             for (auto num : b->postNum) {
                 Post* p = &posts[num];
-                msg += to_string(p->SN);
-                msg += " ";
-                msg += p->title;
-                msg += " ";
-                msg += p->author;
-                msg += " ";
-                msg += p->date;
-                msg += "\n";
-                
+                if (!p->deleted) {
+                    msg += to_string(p->SN);
+                    msg += " ";
+                    msg += p->title;
+                    msg += " ";
+                    msg += p->author;
+                    msg += " ";
+                    msg += p->date;
+                    msg += "\n";
+                }
             }
             break;
         }
@@ -362,4 +369,36 @@ void parseRead(
     return;
 }
 
-
+void parseDeletePost(
+    int sockfd,
+    vector<string> &login,
+    vector<string> &split,
+    vector<Board> &boards,
+    vector<Post> &posts
+) {
+    string msg;
+    if (split.size() != 2) { // fail(0)
+        msg += "Usage: delete-post <post-S/N>\n";
+        write(sockfd, msg.c_str(), msg.length());
+        return;
+    }
+    if (login[sockfd] == "") { // fail(1)
+        msg += "Please login first.\n";
+        write(sockfd, msg.c_str(), msg.length());
+        return;
+    }
+    if (stoi(split[1]) > posts.size() || posts[stoi(split[1])-1].deleted) { // fail(2)
+        msg += "Post does not exist.\n";
+        write(sockfd, msg.c_str(), msg.length());
+        return;
+    }
+    if (login[sockfd] != posts[stoi(split[1])-1].author) { // fail(3)
+        msg += "Not the post owner.\n";
+        write(sockfd, msg.c_str(), msg.length());
+        return;
+    }
+    posts[stoi(split[1])-1].deleted = true;
+    msg += "Delete successfully.\n";
+    write(sockfd, msg.c_str(), msg.length());
+    return;
+}

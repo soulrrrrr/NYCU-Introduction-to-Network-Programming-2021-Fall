@@ -20,6 +20,7 @@ void parseCreatePost(int sockfd, vector<User> &users, vector<string> &login, vec
 void parseListBoard(int sockfd, vector<Board> &boards);
 void parseListPost(int sockfd, vector<string> &split, vector<Board> &boards, vector<Post> &posts);
 void parseRead(int sockfd, vector<string> &split, vector<Board> &boards, vector<Post> &posts);
+void parseDeletePost(int sockfd, vector<string> &login, vector<string> &split, vector<Board> &boards, vector<Post> &posts);
 
 
 
