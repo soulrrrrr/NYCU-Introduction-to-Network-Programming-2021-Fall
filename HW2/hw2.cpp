@@ -10,14 +10,13 @@
 #include <poll.h>
 #include "structs.h"
 #include "parse.h"
+#include "utils.h"
 
 #define LISTENQ 10
 #define MAXLINE 4096
 #define OPEN_MAX 256
 #define INFTIM -1
 using namespace std;
-
-int char_to_int(char *c); // Inspired by Thomas Wang (can use stoi instead)
 
 vector<Post> posts;
 vector<Board> boards;
@@ -145,13 +144,3 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-// utils
-
-int char_to_int(char *c) {
-    int t = 0;
-    for (int i = 0; i < strlen(c); i++) {
-        t *= 10;
-        t += c[i] - '0';
-    }
-    return t;
-}

@@ -9,6 +9,7 @@
 #include <ctime>        // date
 #include "structs.h"
 #include "parse.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -47,8 +48,9 @@ int parse(
     else if (split[0] == "list-board") parseListBoard(sockfd, boards);
     else if (split[0] == "list-post") parseListPost(sockfd, split, boards, posts);
     else if (split[0] == "read") parseRead(sockfd, split, boards, posts);
-    else if (split[0] == "delete-post") parseDeletePost(sockfd, login, split, boards, posts);
-
+    else if (split[0] == "delete-post") parseDeletePost(sockfd, login, split, posts);
+    else if (split[0] == "update-post") parseUpdatePost(sockfd, login, split, posts);
+    else if (split[0] == "comment") parseComment(sockfd, login, split, posts);
 
     write(sockfd, readbuf, n);
     return ret;
@@ -246,8 +248,6 @@ void parseCreatePost(
         cont.replace(t, 1, "\n");
     }
 
-    cont += "\n--\n";
-
     time_t now = time(0);
     tm *ltm = localtime(&now);
     string date = to_string(1 + ltm->tm_mon);
@@ -346,7 +346,8 @@ void parseRead(
     vector<Post> &posts
 ) {
     string msg;
-    if (split.size() != 2) { // fail(0)
+    if (split.size() != 2 ||
+        !isNumber(split[1])) { // fail(0)
         msg += "read <post-S/N>\n";
         write(sockfd, msg.c_str(), msg.length());
         return;
@@ -365,6 +366,13 @@ void parseRead(
     msg += p->date;
     msg += "\n--\n";
     msg += p->content;
+    msg += "\n--\n";
+    for (auto c : p->comments) {
+        msg += c.user;
+        msg += ": ";
+        msg += c.comment;
+        msg += "\n";
+    }
     write(sockfd, msg.c_str(), msg.length());
     return;
 }
@@ -373,11 +381,11 @@ void parseDeletePost(
     int sockfd,
     vector<string> &login,
     vector<string> &split,
-    vector<Board> &boards,
     vector<Post> &posts
 ) {
     string msg;
-    if (split.size() != 2) { // fail(0)
+    if (split.size() != 2 ||
+        !isNumber(split[1])) { // fail(0)
         msg += "Usage: delete-post <post-S/N>\n";
         write(sockfd, msg.c_str(), msg.length());
         return;
@@ -399,6 +407,94 @@ void parseDeletePost(
     }
     posts[stoi(split[1])-1].deleted = true;
     msg += "Delete successfully.\n";
+    write(sockfd, msg.c_str(), msg.length());
+    return;
+}
+
+void parseUpdatePost(
+    int sockfd,
+    vector<string> &login,
+    vector<string> &split,
+    vector<Post> &posts
+) {
+    string msg;
+    if (split.size() < 4 ||
+        !isNumber(split[1]) ||
+        split[2] != "--title" &&
+        split[2] != "--content") { // fail(0)
+        msg += "update-post <post-S/N> --title/content <new>\n";
+        write(sockfd, msg.c_str(), msg.length());
+        return;
+    }
+    if (login[sockfd] == "") { // fail(1)
+        msg += "Please login first.\n";
+        write(sockfd, msg.c_str(), msg.length());
+        return;
+    }
+    if (stoi(split[1]) > posts.size() ||
+        posts[stoi(split[1])-1].deleted) { // fail(2)
+        msg += "Post does not exist.\n";
+        write(sockfd, msg.c_str(), msg.length());
+        return;
+    }
+    if (login[sockfd] != posts[stoi(split[1])-1].author) { // fail(3)
+        msg += "Not the post owner.\n";
+        write(sockfd, msg.c_str(), msg.length());
+        return;
+    }
+
+    string change = split[3];
+    for(int i = 4; i < split.size(); i++) {
+        change += " ";
+        change += split[i];
+    }
+    if (split[2] == "--title") {
+        posts[stoi(split[1])-1].title = change;
+    }
+    else {
+        int t;
+        while ((t = change.find("<br>")) != -1) {
+            change.erase(t+1, 3);
+            change.replace(t, 1, "\n");
+        }
+        posts[stoi(split[1])-1].content = change;
+    }
+    msg += "Update successfully.\n";
+    write(sockfd, msg.c_str(), msg.length());
+    return;
+}
+
+void parseComment(
+    int sockfd,
+    vector<string> &login,
+    vector<string> &split,
+    vector<Post> &posts
+) {
+    string msg;
+    if (split.size() < 3 ||
+        !isNumber(split[1])) { // fail(0)
+        msg += "comment <post-S/N> <comment>\n";
+        write(sockfd, msg.c_str(), msg.length());
+        return;
+    }
+    if (login[sockfd] == "") { // fail(1)
+        msg += "Please login first.\n";
+        write(sockfd, msg.c_str(), msg.length());
+        return;
+    }
+    if (stoi(split[1]) > posts.size() ||
+        posts[stoi(split[1])-1].deleted) { // fail(2)
+        msg += "Post does not exist.\n";
+        write(sockfd, msg.c_str(), msg.length());
+        return;
+    }
+    string change = split[2];
+    for(int i = 3; i < split.size(); i++) {
+        change += " ";
+        change += split[i];
+    }
+    posts[stoi(split[1])-1].comments.push_back(Comment(login[sockfd], change));
+    msg += "Comment successfully.\n";
     write(sockfd, msg.c_str(), msg.length());
     return;
 }

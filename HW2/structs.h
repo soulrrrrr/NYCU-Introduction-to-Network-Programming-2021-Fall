@@ -5,6 +5,13 @@
 #include <string>
 using namespace std;
 
+struct Comment{
+    string user;
+    string comment;
+    Comment(){}
+    Comment(string user, string comment) : user(user), comment(comment) {}
+};
+
 struct Post{
     int SN;
     string title;
@@ -12,6 +19,7 @@ struct Post{
     string date;
     string content;
     bool deleted;
+    vector<Comment> comments;
     Post() {}
     Post(int SN, string title, string author, string date, string content) : SN(SN), title(title), author(author), date(date), content(content) {
         deleted = false;
