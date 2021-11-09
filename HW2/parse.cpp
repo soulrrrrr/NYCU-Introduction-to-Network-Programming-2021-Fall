@@ -149,9 +149,11 @@ int parseExit(
     int sockfd,
     vector<string> &login
 ) {
-    string msg;
-    msg += "Bye.\n";
-    write(sockfd, msg.c_str(), msg.length());
+    // string msg;
+    // msg += "Bye, ";
+    // msg += login[sockfd];
+    // msg += ".\n";
+    // write(sockfd, msg.c_str(), msg.length());
     if (login[sockfd] != "") {
         login[sockfd] = "";
     }
