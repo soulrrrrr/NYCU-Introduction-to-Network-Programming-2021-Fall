@@ -13,3 +13,10 @@ Recommended compile & run on Linux system.
   - [指令&範例](https://hackmd.io/@Cw77l7QTQyuEGh-tVg3fjA/SyfBvXd4t)
   - `感謝 1am9trash 指導 multithread 語法`
 
+- [HW2 Also BBS Server](HW2)
+  - 可以創版，在板上發帖，可以回覆帖子
+  - 進度: 已完成 (100%)
+  - 編譯: `make`
+  - 開啟 Server : `./hw2 <port>`
+  - Client 連接 : `nc <IP> <port>`
+  - [指令&範例](https://hackmd.io/XTPsGsJBT3KH8NBgW91wLA)

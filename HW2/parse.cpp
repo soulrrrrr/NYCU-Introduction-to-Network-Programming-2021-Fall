@@ -52,7 +52,7 @@ int parse(
     else if (split[0] == "update-post") parseUpdatePost(sockfd, login, split, posts);
     else if (split[0] == "comment") parseComment(sockfd, login, split, posts);
 
-    write(sockfd, readbuf, n);
+    //write(sockfd, readbuf, n);
     return ret;
 }
 
@@ -149,11 +149,6 @@ int parseExit(
     int sockfd,
     vector<string> &login
 ) {
-    // string msg;
-    // msg += "Bye, ";
-    // msg += login[sockfd];
-    // msg += ".\n";
-    // write(sockfd, msg.c_str(), msg.length());
     if (login[sockfd] != "") {
         login[sockfd] = "";
     }
@@ -202,7 +197,7 @@ void parseCreatePost(
     string msg;
     string title, cont;
     int titleIndex=0, contentIndex=0;
-    cout << "split: " << split.size() << endl;
+    //cout << "split: " << split.size() << endl;
     for (int i = 0; i < split.size(); i++) {
         if (split[i] == "--title") {
             titleIndex = i;
@@ -211,6 +206,13 @@ void parseCreatePost(
             contentIndex = i;
         }
     }
+
+    bool title_content_swapped = false;
+    if (titleIndex > contentIndex) {
+        swap(titleIndex, contentIndex);
+        title_content_swapped = true;
+    }
+
     if (split.size() < 6 || !titleIndex || !contentIndex) { // fail(0)
         msg += "Usage: create-post <board-name> --title <title> --content <content>\n";
         write(sockfd, msg.c_str(), msg.length());
@@ -244,6 +246,10 @@ void parseCreatePost(
         cont += " ";
         cont += split[i];
     }
+
+    if (title_content_swapped)
+        swap(title, cont);
+
     int t;
     while ((t = cont.find("<br>")) != -1) {
         cont.erase(t+1, 3);
@@ -256,16 +262,16 @@ void parseCreatePost(
     date += "/";
     date += to_string(ltm->tm_mday);
     int sn = posts.size()+1;
-    cout << "sn: " << sn << endl;
+    //cout << "sn: " << sn << endl;
 
     for (auto b = boards.begin(); b != boards.end(); b++) {
         if (b->name == split[1]) { 
             posts.push_back(Post(sn, title, login[sockfd], date, cont));
-            cout << "POSTS:" << posts.size() << endl;
+            //cout << "POSTS:" << posts.size() << endl;
             (b->postNum).push_back(sn-1);
-            for (int i = 0; i < (b->postNum).size(); i++) {
-                cout << "in a: " << posts[(b->postNum)[i]].SN << endl;
-            }
+            // for (int i = 0; i < (b->postNum).size(); i++) {
+            //     cout << "in a: " << posts[(b->postNum)[i]].SN << endl;
+            // }
             
             break;
         }

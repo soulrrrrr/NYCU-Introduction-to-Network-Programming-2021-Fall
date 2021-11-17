@@ -69,14 +69,14 @@ int main(int argc, char** argv) {
                 return 1;
             }
             else {
-                cout << "file discriptor " << clientfd << " has new user." << endl;
+                cout << "file descriptor " << clientfd << " has new user." << endl;
                 msg = "********************************\n";
-                write(clientfd, msg.c_str(), msg.length());
-                msg = "** Welcome to the BBS server. **\n";
-                write(clientfd, msg.c_str(), msg.length());
-                msg = "********************************\n";
-                write(clientfd, msg.c_str(), msg.length());
-                msg = "% ";
+                //write(clientfd, msg.c_str(), msg.length());
+                msg += "** Welcome to the BBS server. **\n";
+                //write(clientfd, msg.c_str(), msg.length());
+                msg += "********************************\n";
+                //write(clientfd, msg.c_str(), msg.length());
+                msg += "% ";
                 write(clientfd, msg.c_str(), msg.length());
             }
 
@@ -123,14 +123,14 @@ int main(int argc, char** argv) {
                     close(sockfd);
                     login[sockfd] = "";
                     client[i].fd = -1;
-                    cout << "file discriptor " << sockfd << " has been closed." << endl;
+                    cout << "file descriptor " << sockfd << " has been closed." << endl;
                 }
                 else
                     //write(sockfd, buf, n);
                     if (parse(sockfd, buf, n, users, login, boards, posts) < 0) {
                         close(sockfd);
                         client[i].fd = -1;
-                        cout << "file discriptor " << sockfd << " has been closed by exit." << endl;
+                        cout << "file descriptor " << sockfd << " has been closed by exit." << endl;
                     };
 
                 msg = "% ";
