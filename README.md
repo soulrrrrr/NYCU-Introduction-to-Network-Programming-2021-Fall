@@ -19,4 +19,5 @@ Recommended compile & run on Linux system.
   - 編譯: `make`
   - 開啟 Server : `./hw2 <port>`
   - Client 連接 : `nc <IP> <port>`
+  - 也可以使用 client.cpp 開啟 Client : `g++ client.cpp -o client`, `client <IP> <port>`S
   - [指令&範例](https://hackmd.io/XTPsGsJBT3KH8NBgW91wLA)
