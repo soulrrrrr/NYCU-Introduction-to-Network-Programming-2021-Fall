@@ -1,4 +1,0 @@
-register a a  
-register b b  
-login a a 
-send b "hi"      

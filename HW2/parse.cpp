@@ -101,12 +101,17 @@ void parseLogin(
             return;
         }
         for (auto u : users) {
-            if (split[1] == u.username) {
-                if (split[2] == u.password) { // same username and password : login succeed
-                    cout << u.username << ": Login successful." << endl;
-                    login[sockfd] = u.username;
-                    break;
+            if (split[1] == u.username && split[2] == u.password) { // same username and password : login succeed
+                for (auto nowLogin : login) {
+                    if (nowLogin == u.username) {
+                        msg += "Please logout first.\n";
+                        write(sockfd, msg.c_str(), msg.length());
+                        return;
+                    }
                 }
+                cout << u.username << ": Login successful." << endl;
+                login[sockfd] = u.username;
+                break;
             }
         }
         if (login[sockfd] != "") {

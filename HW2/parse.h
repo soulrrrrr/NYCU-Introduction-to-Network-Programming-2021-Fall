@@ -6,7 +6,7 @@
 #include <vector>
 #include <poll.h>
 #include "structs.h"
-
+#define OPEN_MAX 256
 using namespace std;
 
 int parse(int sockfd, char *readbuf, ssize_t n, vector<User> &users, vector<string> &login, vector<Board> &boards, vector<Post> &posts);

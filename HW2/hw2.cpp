@@ -14,7 +14,6 @@
 
 #define LISTENQ 10
 #define MAXLINE 4096
-#define OPEN_MAX 256
 #define INFTIM -1
 using namespace std;
 

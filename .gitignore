@@ -1,2 +1,11 @@
 .noGit/
 *.out
+
+*.vscode
+
+# Test script provided by TA
+testhw2/
+
+# Homework file
+0816034_*
+*.zip
