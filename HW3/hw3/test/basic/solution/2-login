@@ -1,0 +1,14 @@
+********************************
+** Welcome to the BBS server. **
+********************************
+% Usage: login <username> <password>
+% Usage: login <username> <password>
+% Login failed.
+% Register successfully.
+% Login failed.
+% Usage: login <username> <password>
+% Welcome, S.
+% Please logout first.
+% Please logout first.
+% Usage: login <username> <password>
+% Bye, S.

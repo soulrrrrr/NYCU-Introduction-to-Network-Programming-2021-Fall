@@ -1,0 +1,23 @@
+********************************
+** Welcome to the BBS server. **
+********************************
+% Register successfully.
+% Please login first.
+% Welcome, Kirigaya.
+% Usage: enter-chat-room <port> <version>
+% Usage: enter-chat-room <port> <version>
+% Usage: enter-chat-room <port> <version>
+% Usage: enter-chat-room <port> <version>
+% Usage: enter-chat-room <port> <version>
+% Version 0 is not supported.
+% Version C8763 is not supported.
+% Welcome to public chat room.
+Port:48763
+Version:2
+% Welcome to public chat room.
+Port:8763
+Version:2
+% Welcome to public chat room.
+Port:8763
+Version:1
+% Bye, Kirigaya.

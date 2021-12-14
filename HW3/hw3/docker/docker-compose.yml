@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  main:
+    build: .
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "22222:22"
+    environment:
+      - EDITOR=vim
+    volumes:
+      - ../:/project
+    privileged: true
+    networks:
+        default:
+    container_name: intro-network-hw3
+
+networks:
+    default:
+
