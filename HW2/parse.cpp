@@ -361,7 +361,7 @@ void parseRead(
     string msg;
     if (split.size() != 2 ||
         !isNumber(split[1])) { // fail(0)
-        msg += "read <post-S/N>\n";
+        msg += "Usage: read <post-S/N>\n";
         write(sockfd, msg.c_str(), msg.length());
         return;
     }
@@ -435,7 +435,7 @@ void parseUpdatePost(
         !isNumber(split[1]) ||
         split[2] != "--title" &&
         split[2] != "--content") { // fail(0)
-        msg += "update-post <post-S/N> --title/content <new>\n";
+        msg += "Usage: update-post <post-S/N> --title/content <new>\n";
         write(sockfd, msg.c_str(), msg.length());
         return;
     }
@@ -486,7 +486,7 @@ void parseComment(
     string msg;
     if (split.size() < 3 ||
         !isNumber(split[1])) { // fail(0)
-        msg += "comment <post-S/N> <comment>\n";
+        msg += "Usage: comment <post-S/N> <comment>\n";
         write(sockfd, msg.c_str(), msg.length());
         return;
     }

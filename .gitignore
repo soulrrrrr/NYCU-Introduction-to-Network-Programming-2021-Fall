@@ -1,10 +1,12 @@
 .noGit/
 *.out
 
-*.vscode
+.vscode/
 
 # Test script provided by TA
 testhw2/
+__MACOSX/
+docker/
 
 # Homework file
 0816034_*

@@ -21,3 +21,12 @@ Recommended compile & run on Linux system.
   - Client 連接 : `nc <IP> <port>`
   - 也可以使用 client.cpp 開啟 Client : `g++ client.cpp -o client`, `client <IP> <port>`
   - [指令&範例](https://hackmd.io/XTPsGsJBT3KH8NBgW91wLA)
+  
+- [HW3 BBS Chatting room](HW3)
+  - 多人聊天室
+  - 使用UDP及規定封包格式傳送訊息
+  - 進度: 已完成 (100%)
+  - 編譯: 執行 `make`
+  - 開啟 Server : `./hw3 <port>`
+  - Client 連接 : `./test/client.py <IP> <port>`
+  - [指令&範例](https://hackmd.io/pck0yPu7RumsR6I9Gix0Tg)
